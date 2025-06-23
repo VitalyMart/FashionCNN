@@ -17,7 +17,7 @@ class FashionCNN(nn.Module):
         
         self.fc1 = nn.Linear(128 * 3 * 3, 256)
         self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, 5)
+        self.fc3 = nn.Linear(128, 4)
         
     def forward(self, x):
         # Первый блок
