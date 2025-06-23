@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 import torch
+import time
 import json
 import os
-from data_loading import get_classes
+from .data_loading import get_classes
 
 def plot_training_history(history):
     """Визуализация процесса обучения"""
@@ -53,14 +55,45 @@ def visualize_predictions(model, loader, device='cpu', num_images=15):
     plt.tight_layout()
     plt.show()
 
-def save_history(history, filename='training_history.json'):
+def save_history(history, filename='models/training_history.json'):
     """Сохранение истории обучения в файл"""
     with open(filename, 'w') as f:
         json.dump(history, f)
 
-def load_history(filename='training_history.json'):
+def load_history(filename='models/training_history.json'):
     """Загрузка истории обучения из файла"""
     if not os.path.exists(filename):
         return None
     with open(filename, 'r') as f:
         return json.load(f)
+
+def show_random_predictions(model, dataset, num_images=20, device='cpu'):
+    """Вывод случайных изображений с предсказаниями"""
+    classes = get_classes()
+    
+    # Выбираем случайные индексы
+    indices = random.sample(range(len(dataset)), num_images)
+    
+    # Создаем grid для отображения
+    plt.figure(figsize=(15, 10))
+    rows = int(num_images / 5) + (1 if num_images % 5 else 0)
+    
+    model.eval()
+    for i, idx in enumerate(indices):
+        image, true_label = dataset[idx]
+        image_tensor = image.unsqueeze(0).to(device)
+        
+        with torch.no_grad():
+            output = model(image_tensor)
+            _, predicted = torch.max(output.data, 1)
+        
+        # Отображаем изображение
+        plt.subplot(rows, 5, i+1)
+        plt.imshow(image.squeeze(), cmap='gray')
+        plt.title(f"True: {classes[true_label]}\nPred: {classes[predicted.item()]}", 
+                 fontsize=8,
+                 color='green' if predicted.item() == true_label else 'red')
+        plt.axis('off')
+    
+    plt.tight_layout()
+    plt.show()

@@ -3,3 +3,6 @@ data/
 *.pth
 venv/
 *.json
+*.jpg
+*.png
+*.webp
