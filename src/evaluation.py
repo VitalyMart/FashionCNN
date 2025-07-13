@@ -74,7 +74,6 @@ def show_random_predictions(model, dataset, num_images=20, device='cpu'):
     # Выбираем случайные индексы
     indices = random.sample(range(len(dataset)), num_images)
     
-    # Создаем grid для отображения
     plt.figure(figsize=(15, 10))
     rows = int(num_images / 5) + (1 if num_images % 5 else 0)
     
@@ -87,7 +86,6 @@ def show_random_predictions(model, dataset, num_images=20, device='cpu'):
             output = model(image_tensor)
             _, predicted = torch.max(output.data, 1)
         
-        # Отображаем изображение
         plt.subplot(rows, 5, i+1)
         plt.imshow(image.squeeze(), cmap='gray')
         plt.title(f"True: {classes[true_label]}\nPred: {classes[predicted.item()]}", 

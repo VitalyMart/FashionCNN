@@ -3,7 +3,7 @@ import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm
 
-def train_model(model, train_loader, val_loader, epochs=20, lr=0.001, device='cpu', patience=5):
+def train_model(model, train_loader, val_loader, epochs=20, lr=0.0001, device='cpu', patience=5):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, factor=0.5)

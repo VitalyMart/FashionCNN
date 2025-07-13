@@ -25,7 +25,6 @@ class DualTransformDataset(Dataset):
         if isinstance(img, torch.Tensor):
             img = transforms.ToPILImage()(img)
             
-        # С вероятностью invert_prob инвертируем изображение
         if random.random() < self.invert_prob:
             img = Image.fromarray(255 - np.array(img))
             
@@ -38,8 +37,6 @@ class DualTransformDataset(Dataset):
         return len(self.data)
 
 def get_data_loaders(batch_size=64, val_split=0.2):
-    """Загрузка данных с аугментацией для 5 классов с инвертированными вариантами"""
-    # Базовые преобразования
     transform_train = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.RandomRotation(10),
@@ -52,26 +49,25 @@ def get_data_loaders(batch_size=64, val_split=0.2):
         transforms.Normalize((0.5,), (0.5,))
     ])
 
-    # Загружаем полные датасеты
     full_train_data = datasets.FashionMNIST(root="data", train=True, download=True)
     full_test_data = datasets.FashionMNIST(root="data", train=False, download=True)
     
-    # Выбранные классы: Dress(3), Pullover(2), Trouser(1), Sandal(5), Bag(8)
     selected_classes = [3, 2, 1, 5, 8]
     
-    # Создаем датасеты с поддержкой инверсии
+    # Train data с аугментацией (инверсия + аугментация)
     train_data = DualTransformDataset(
         full_train_data, 
         selected_classes, 
         transform=transform_train,
-        invert_prob=0.5  # 50% chance to invert
+        invert_prob=0.5  
     )
     
+    # Test data 
     test_data = DualTransformDataset(
         full_test_data,
         selected_classes,
         transform=transform_test,
-        invert_prob=0.0  # Не инвертируем тестовые данные
+        invert_prob=0.5  
     )
     
     # Разделяем train на train и validation
@@ -79,18 +75,12 @@ def get_data_loaders(batch_size=64, val_split=0.2):
     val_size = len(train_data) - train_size
     train_data, val_data = random_split(train_data, [train_size, val_size])
     
-    # Для валидации используем тестовые трансформации без инверсии
-    val_data = DualTransformDataset(
-        [(img, label) for img, label in val_data], 
-        selected_classes, 
-        transform=transform_test,
-        invert_prob=0.0
-    )
     
-    # Создаем DataLoader'ы
+    val_data.dataset.transform = transform_test  
+    
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=2)
-    val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False, num_workers=2)
-    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=2)
+    val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True, num_workers=2)
+    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=2)
     
     return train_loader, val_loader, test_loader
 
