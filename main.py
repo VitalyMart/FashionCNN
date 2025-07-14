@@ -15,7 +15,7 @@ def parse_arguments():
     parser.add_argument('--image', type=str, help='Path to image file for prediction')
     parser.add_argument('--plot', action='store_true', help='Plot training history')
     parser.add_argument('--epochs', type=int, default=10, help='Number of epochs for training')
-    #parser.add_argument('--random', action='store_true', help='Show predictions for 20 random images')
+    parser.add_argument('--random', action='store_true', help='Show predictions for 20 random images')
     parser.add_argument('--check_imgs', action='store_true', 
                        help='Show number of images in each class')
     parser.add_argument('--model_path', type=str, default='models/fashion_mnist_model.pth', 
@@ -84,7 +84,7 @@ def main():
         handle_plotting()
 
     if not any([args.train, args.test, args.plot, args.check_imgs]):
-        parser.print_help()
+        print("No action specified. Use --help to see available options.")
 
 if __name__ == "__main__":
     main()
