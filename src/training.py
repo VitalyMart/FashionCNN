@@ -31,7 +31,7 @@ def train_model(model, train_loader, val_loader, epochs=20, lr=0.0001, device='c
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels)
-            loss.backward()
+            loss.backward() #градиент
             optimizer.step()
             
             running_loss += loss.item()

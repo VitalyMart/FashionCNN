@@ -67,31 +67,3 @@ def load_history(filename='models/training_history.json'):
     with open(filename, 'r') as f:
         return json.load(f)
 
-def show_random_predictions(model, dataset, num_images=20, device='cpu'):
-    """Вывод случайных изображений с предсказаниями"""
-    classes = get_classes()
-    
-    # Выбираем случайные индексы
-    indices = random.sample(range(len(dataset)), num_images)
-    
-    plt.figure(figsize=(15, 10))
-    rows = int(num_images / 5) + (1 if num_images % 5 else 0)
-    
-    model.eval()
-    for i, idx in enumerate(indices):
-        image, true_label = dataset[idx]
-        image_tensor = image.unsqueeze(0).to(device)
-        
-        with torch.no_grad():
-            output = model(image_tensor)
-            _, predicted = torch.max(output.data, 1)
-        
-        plt.subplot(rows, 5, i+1)
-        plt.imshow(image.squeeze(), cmap='gray')
-        plt.title(f"True: {classes[true_label]}\nPred: {classes[predicted.item()]}", 
-                 fontsize=8,
-                 color='green' if predicted.item() == true_label else 'red')
-        plt.axis('off')
-    
-    plt.tight_layout()
-    plt.show()

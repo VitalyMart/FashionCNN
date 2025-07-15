@@ -93,10 +93,10 @@ def predict_external_image(model, image_path, device='cpu'):
 
 def visualize_single_prediction(image_path, prediction, model, device='cpu'):
     """Визуализация одного изображения с предсказанием"""
-    # Загружаем оригинальное изображение без преобразований для отображения
+    
     original_img = Image.open(image_path).convert('L')
     
-    # Создаем фигуру
+    
     plt.figure(figsize=(8, 4))
     
     # Отображаем оригинальное изображение
@@ -105,7 +105,7 @@ def visualize_single_prediction(image_path, prediction, model, device='cpu'):
     plt.title("Original Image")
     plt.axis('off')
     
-    # Отображаем предобработанное изображение (как видит модель)
+    
     processed_img = Image.open(image_path).convert('L')
     transform = transforms.Compose([
         transforms.Resize((28, 28)), 
