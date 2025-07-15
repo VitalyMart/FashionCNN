@@ -1,5 +1,7 @@
 import argparse
+
 import torch
+
 from src.data_loading import get_data_loaders, print_class_distribution
 from src.model import FashionCNN
 from src.training import train_model
@@ -15,7 +17,6 @@ def parse_arguments():
     parser.add_argument('--image', type=str, help='Path to image file for prediction')
     parser.add_argument('--plot', action='store_true', help='Plot training history')
     parser.add_argument('--epochs', type=int, default=10, help='Number of epochs for training')
-    parser.add_argument('--random', action='store_true', help='Show predictions for 20 random images')
     parser.add_argument('--check_imgs', action='store_true', 
                        help='Show number of images in each class')
     parser.add_argument('--model_path', type=str, default='models/fashion_mnist_model.pth', 
